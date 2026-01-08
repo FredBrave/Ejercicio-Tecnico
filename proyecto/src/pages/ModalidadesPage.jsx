@@ -6,15 +6,25 @@ export default function ModalidadesPage() {
     const [modalidades, setModalidades] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalidadEditar, setModalidadEditar] = useState(null);
+    const [estado, setEstado] = useState("");
+
 
     const cargarModalidades = async () => {
-        const data = await modalidadService.getAll();
+        const params = {};
+
+        if (estado !== "") params.estado = estado;
+
+        const data = await modalidadService.getAll(params);
         setModalidades(data);
-    }
+    };
 
     useEffect(() => {
         cargarModalidades();
     }, []);
+
+    useEffect(() => {
+        cargarModalidades();
+    }, [estado]);
 
     const handleSuccess = () => {
         setShowModal(false);
@@ -54,6 +64,20 @@ export default function ModalidadesPage() {
                 >
                     + Nueva Modalidad
                 </button>
+            </div>
+
+            <div className="row mb-3">
+                <div className="col-md-3">
+                    <select
+                        className="form-select"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                    >
+                        <option value="">Todos</option>
+                        <option value="true">Activos</option>
+                        <option value="false">Inactivos</option>
+                    </select>
+                </div>
             </div>
 
             <table className="table table-bordered mt-3">

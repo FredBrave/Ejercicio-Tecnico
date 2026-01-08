@@ -1,8 +1,8 @@
 import api from "../api/api";
 
 export const modalidadService = {
-    getAll: async () => {
-        const response = await api.get("modalidades/");
+    getAll: async (params = {}) => {
+        const response = await api.get("modalidades/", { params });
         return response.data;
     },
 
