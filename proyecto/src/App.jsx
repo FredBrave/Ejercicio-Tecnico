@@ -10,7 +10,7 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/modalidades" element={<ModalidadesPage />} />
+        <Route path="/modalidades" element={<ModalidadesPage onSuccess={() => { }} />} />
       </Routes>
     </BrowserRouter>
   )
