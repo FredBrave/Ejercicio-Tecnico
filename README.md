@@ -52,6 +52,28 @@ Ejecutar el servidor:
 ```
 python manage.py runserver
 ```
+### Frontend (React)
+
+Ir a la carpeta del frontend:
+```
+cd proyecto
+```
+
+Instalar dependencias:
+```
+npm install
+```
+
+Ejecutar la aplicación:
+```
+npm run dev
+```
+
+El frontend estará disponible en:
+
+http://localhost:5173/
+
+## Informacion
 
 El servidor de backend estara encendido en:
 
@@ -77,28 +99,6 @@ CRUD completo
 Filtros por estado y modalidad
 
 Búsqueda por nombre
-
-### Frontend (React)
-
-Ir a la carpeta del frontend:
-```
-cd proyecto
-```
-
-Instalar dependencias:
-```
-npm install
-```
-
-Ejecutar la aplicación:
-```
-npm run dev
-```
-
-El frontend estará disponible en:
-
-http://localhost:5173/
-
 
 ## Tecnologías utilizadas
 ### Backend
