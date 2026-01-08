@@ -9,9 +9,15 @@ class ModalidadSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Modalidad
-        fields = ('id', 'nombre', 'estado')
+        fields = '__all__'
 
 class CarreraSerializer(serializers.ModelSerializer):
+    
+    modalidad_nombre = serializers.CharField(
+        source='modalidad.nombre',
+        read_only=True
+    )
+    
     def validar_nombre(self, value):
         if not value.strip():
             raise serializers.ValidationError("El nombre no puede estar vacio")
@@ -19,4 +25,4 @@ class CarreraSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Carrera
-        fields = ('id', 'nombre', 'modalidad', 'estado')
+        fields = '__all__'
