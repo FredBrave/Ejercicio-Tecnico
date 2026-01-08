@@ -12,8 +12,6 @@ export default function CarrerasPage() {
     const [modalidades, setModalidades] = useState([]);
     const [texto, setTexto] = useState("");
 
-
-
     const cargarCarreras = async () => {
         const params = {};
 
@@ -78,80 +76,92 @@ export default function CarrerasPage() {
                 </button>
             </div>
 
-            <div className="row mb-3">
-                <div className="col-md-4">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar carrera..."
-                        value={texto}
-                        onChange={(e) => setTexto(e.target.value)}
-                    />
-                </div>
+            <div className="card shadow-sm mb-3">
+                <div className="card-body">
+                    <div className="row mb-3">
+                        <div className="col-md-4">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Buscar carrera..."
+                                value={texto}
+                                onChange={(e) => setTexto(e.target.value)}
+                            />
+                        </div>
 
-                <div className="col-md-3">
-                    <select
-                        className="form-select"
-                        value={estado}
-                        onChange={(e) => setEstado(e.target.value)}
-                    >
-                        <option value="">Todos los estados</option>
-                        <option value="true">Activos</option>
-                        <option value="false">Inactivos</option>
-                    </select>
-                </div>
+                        <div className="col-md-3">
+                            <select
+                                className="form-select"
+                                value={estado}
+                                onChange={(e) => setEstado(e.target.value)}
+                            >
+                                <option value="">Todos los estados</option>
+                                <option value="true">Activos</option>
+                                <option value="false">Inactivos</option>
+                            </select>
+                        </div>
 
-                <div className="col-md-3">
-                    <select
-                        className="form-select"
-                        value={modalidad}
-                        onChange={(e) => setModalidad(e.target.value)}
-                    >
-                        <option value="">Todas las modalidades</option>
-                        {modalidades.map((m) => (
-                            <option key={m.id} value={m.id}>
-                                {m.nombre}
-                            </option>
-                        ))}
-                    </select>
+                        <div className="col-md-3">
+                            <select
+                                className="form-select"
+                                value={modalidad}
+                                onChange={(e) => setModalidad(e.target.value)}
+                            >
+                                <option value="">Todas las modalidades</option>
+                                {modalidades.map((m) => (
+                                    <option key={m.id} value={m.id}>
+                                        {m.nombre}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <table className="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
-                        <th>Modalidad</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {carreras.map((c) => (
-                        <tr key={c.id}>
-                            <td>{c.id}</td>
-                            <td>{c.nombre}</td>
-                            <td>{c.estado ? "Activo" : "Inactivo"}</td>
-                            <td>{c.modalidad_nombre || c.modalidad}</td>
-                            <td>
-                                <button
-                                    className="btn btn-sm btn-warning me-2"
-                                    onClick={() => handleEditar(c)}
-                                >
-                                    Editar
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleEliminar(c.id)}
-                                >
-                                    Eliminar
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <div className="card shadow-sm">
+                <div className="table-responsive">
+                    <table className="table table-hover table-striped mb-0">
+                        <thead className="table-dark">
+                            <tr>
+                                <th style={{ width: "8%" }}>ID</th>
+                                <th style={{ width: "40%" }}>Nombre</th>
+                                <th style={{ width: "15%" }}>Estado</th>
+                                <th style={{ width: "20%" }}>Modalidad</th>
+                                <th style={{ width: "17%" }}>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {carreras.map((c) => (
+                                <tr key={c.id}>
+                                    <td>{c.id}</td>
+                                    <td>{c.nombre}</td>
+                                    <td>
+                                        <span className={`badge ${c.estado ? 'bg-success' : 'bg-secondary'}`}>
+                                            {c.estado ? "Activo" : "Inactivo"}
+                                        </span>
+                                    </td>
+                                    <td>{c.modalidad_nombre || c.modalidad}</td>
+                                    <td>
+                                        <button
+                                            className="btn btn-sm btn-warning me-2"
+                                            onClick={() => handleEditar(c)}
+                                        >
+                                            Editar
+                                        </button>
+                                        <button
+                                            className="btn btn-sm btn-danger"
+                                            onClick={() => handleEliminar(c.id)}
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             {showModal && (
                 <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>

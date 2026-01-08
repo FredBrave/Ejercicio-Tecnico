@@ -1,7 +1,8 @@
 import './App.css'
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import ModalidadesPage from './pages/ModalidadesPage';
 import CarrerasPage from './pages/CarrerasPage.jsx';
+
 function App() {
   return (
     <BrowserRouter>
@@ -13,12 +14,12 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/modalidades" element={<ModalidadesPage onSuccess={() => { }} />} />
-        <Route path="/carreras" element={<CarrerasPage onSuccess={() => { }} />} />
+        <Route path="/" element={<Navigate to="/modalidades" replace />} />
+        <Route path="/modalidades" element={<ModalidadesPage />} />
+        <Route path="/carreras" element={<CarrerasPage />} />
       </Routes>
     </BrowserRouter>
   )
-
 }
 
 export default App

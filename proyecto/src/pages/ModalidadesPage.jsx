@@ -61,80 +61,92 @@ export default function ModalidadesPage() {
                 </button>
             </div>
 
-            <div className="row mb-3 align-items-center">
-                <div className="col-md-4">
-                    <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Buscar por nombre..."
-                        value={texto}
-                        onChange={(e) => setTexto(e.target.value)}
-                    />
-                </div>
+            <div className="card shadow-sm mb-3">
+                <div className="card-body">
+                    <div className="row mb-3 align-items-center">
+                        <div className="col-md-4">
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Buscar por nombre..."
+                                value={texto}
+                                onChange={(e) => setTexto(e.target.value)}
+                            />
+                        </div>
 
-                <div className="col-md-3">
-                    <select
-                        className="form-select"
-                        value={estado}
-                        onChange={(e) => setEstado(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        <option value="true">Activos</option>
-                        <option value="false">Inactivos</option>
-                    </select>
-                </div>
+                        <div className="col-md-3">
+                            <select
+                                className="form-select"
+                                value={estado}
+                                onChange={(e) => setEstado(e.target.value)}
+                            >
+                                <option value="">Todos</option>
+                                <option value="true">Activos</option>
+                                <option value="false">Inactivos</option>
+                            </select>
+                        </div>
 
-                {isFetching && (
-                    <div className="col-md-3 text-muted">
-                        Buscando...
+                        {isFetching && (
+                            <div className="col-md-3 text-muted">
+                                Buscando...
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
 
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {modalidades.length === 0 ? (
-                        <tr>
-                            <td colSpan="4" className="text-center">
-                                No hay resultados
-                            </td>
-                        </tr>
-                    ) : (
-                        modalidades.map((m) => (
-                            <tr key={m.id}>
-                                <td>{m.id}</td>
-                                <td>{m.nombre}</td>
-                                <td>{m.estado ? "Activo" : "Inactivo"}</td>
-                                <td>
-                                    <button
-                                        className="btn btn-sm btn-warning me-2"
-                                        onClick={() => {
-                                            setModalidadEditar(m);
-                                            setShowModal(true);
-                                        }}
-                                    >
-                                        Editar
-                                    </button>
-                                    <button
-                                        className="btn btn-sm btn-danger"
-                                        onClick={() => handleEliminar(m.id)}
-                                    >
-                                        Eliminar
-                                    </button>
-                                </td>
+            <div className="card shadow-sm">
+                <div className="table-responsive">
+                    <table className="table table-hover table-striped mb-0">
+                        <thead className="table-dark">
+                            <tr>
+                                <th style={{ width: "10%" }}>ID</th>
+                                <th style={{ width: "50%" }}>Nombre</th>
+                                <th style={{ width: "20%" }}>Estado</th>
+                                <th style={{ width: "20%" }}>Acciones</th>
                             </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+                        </thead>
+                        <tbody>
+                            {modalidades.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="text-center py-4">
+                                        No hay resultados
+                                    </td>
+                                </tr>
+                            ) : (
+                                modalidades.map((m) => (
+                                    <tr key={m.id}>
+                                        <td>{m.id}</td>
+                                        <td>{m.nombre}</td>
+                                        <td>
+                                            <span className={`badge ${m.estado ? 'bg-success' : 'bg-secondary'}`}>
+                                                {m.estado ? "Activo" : "Inactivo"}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn btn-sm btn-warning me-2"
+                                                onClick={() => {
+                                                    setModalidadEditar(m);
+                                                    setShowModal(true);
+                                                }}
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={() => handleEliminar(m.id)}
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
             {showModal && (
                 <div
