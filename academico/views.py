@@ -1,3 +1,9 @@
 from django.shortcuts import render
+from rest_framework import viewsets
+from .serializers import ModalidadSerializer, CarreraSerializer
+from .models import Modalidad, Carrera
 
-# Create your views here.
+class ModalidadView(viewsets.ModelViewSet):
+    serializer_class = ModalidadSerializer
+    queryset = Modalidad.objects.all()
+    
