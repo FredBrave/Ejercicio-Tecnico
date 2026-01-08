@@ -102,23 +102,21 @@ http://localhost:5173/
 
 ## Tecnologías utilizadas
 ### Backend
-
-Python
-
-Django
-
-Django REST Framework
-
-Django Filter
-
-SQLite
+- Python 3.11+
+- Django 5.2.10
+- Django REST Framework 3.16.1
+- django-filter 25.2
+- django-cors-headers 4.9.0
+- asgiref 3.11.0
+- sqlparse 0.5.5
+- tzdata 2025.
 
 ### Frontend
-
-React
-
-Vite
-
-Bootstrap
-
-Axios
+- React
+- React Router DOM
+- @tanstack/react-query
+- Axios
+- Bootstrap 5
+- JavaScript (ES6+)
+- Vite
+- Node.js / npm
