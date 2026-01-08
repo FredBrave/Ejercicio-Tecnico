@@ -1,54 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import ModalidadForm from "../components/ModalidadForm";
 import { modalidadService } from "../services/ModalidadService";
 
 export default function ModalidadesPage() {
-    const [modalidades, setModalidades] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalidadEditar, setModalidadEditar] = useState(null);
     const [estado, setEstado] = useState("");
+    const [texto, setTexto] = useState("");
 
+    const queryClient = useQueryClient();
 
-    const cargarModalidades = async () => {
-        const params = {};
+    const {
+        data: modalidades = [],
+        isFetching,
+    } = useQuery({
+        queryKey: ["modalidades", estado, texto],
+        queryFn: () => {
+            const params = {};
 
-        if (estado !== "") params.estado = estado;
+            if (estado !== "") {
+                params.estado = estado === "true";
+            }
 
-        const data = await modalidadService.getAll(params);
-        setModalidades(data);
-    };
+            if (texto.trim() !== "") {
+                params.search = texto;
+            }
 
-    useEffect(() => {
-        cargarModalidades();
-    }, []);
-
-    useEffect(() => {
-        cargarModalidades();
-    }, [estado]);
+            return modalidadService.getAll(params);
+        },
+        keepPreviousData: true,
+    });
 
     const handleSuccess = () => {
         setShowModal(false);
         setModalidadEditar(null);
-        cargarModalidades();
-    };
-
-    const handleNueva = () => {
-        setModalidadEditar(null);
-        setShowModal(true);
-    };
-
-    const handleEditar = (modalidad) => {
-        setModalidadEditar(modalidad);
-        setShowModal(true);
+        queryClient.invalidateQueries(["modalidades"]);
     };
 
     const handleEliminar = async (id) => {
         if (window.confirm("¿Estás seguro de eliminar esta modalidad?")) {
             try {
                 await modalidadService.delete(id);
-                alert("Modalidad eliminada correctamente");
-                cargarModalidades();
-            } catch (err) {
+                queryClient.invalidateQueries(["modalidades"]);
+            } catch {
                 alert("Error al eliminar modalidad");
             }
         }
@@ -60,13 +55,23 @@ export default function ModalidadesPage() {
                 <h2>Modalidades</h2>
                 <button
                     className="btn btn-primary"
-                    onClick={handleNueva}
+                    onClick={() => setShowModal(true)}
                 >
                     + Nueva Modalidad
                 </button>
             </div>
 
-            <div className="row mb-3">
+            <div className="row mb-3 align-items-center">
+                <div className="col-md-4">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Buscar por nombre..."
+                        value={texto}
+                        onChange={(e) => setTexto(e.target.value)}
+                    />
+                </div>
+
                 <div className="col-md-3">
                     <select
                         className="form-select"
@@ -78,9 +83,15 @@ export default function ModalidadesPage() {
                         <option value="false">Inactivos</option>
                     </select>
                 </div>
+
+                {isFetching && (
+                    <div className="col-md-3 text-muted">
+                        Buscando...
+                    </div>
+                )}
             </div>
 
-            <table className="table table-bordered mt-3">
+            <table className="table table-bordered">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -90,48 +101,52 @@ export default function ModalidadesPage() {
                     </tr>
                 </thead>
                 <tbody>
-                    {modalidades.map((m) => (
-                        <tr key={m.id}>
-                            <td>{m.id}</td>
-                            <td>{m.nombre}</td>
-                            <td>{m.estado ? "Activo" : "Inactivo"}</td>
-                            <td>
-                                <button
-                                    className="btn btn-sm btn-warning me-2"
-                                    onClick={() => handleEditar(m)}
-                                >
-                                    Editar
-                                </button>
-                                <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleEliminar(m.id)}
-                                >
-                                    Eliminar
-                                </button>
+                    {modalidades.length === 0 ? (
+                        <tr>
+                            <td colSpan="4" className="text-center">
+                                No hay resultados
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        modalidades.map((m) => (
+                            <tr key={m.id}>
+                                <td>{m.id}</td>
+                                <td>{m.nombre}</td>
+                                <td>{m.estado ? "Activo" : "Inactivo"}</td>
+                                <td>
+                                    <button
+                                        className="btn btn-sm btn-warning me-2"
+                                        onClick={() => {
+                                            setModalidadEditar(m);
+                                            setShowModal(true);
+                                        }}
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        className="btn btn-sm btn-danger"
+                                        onClick={() => handleEliminar(m.id)}
+                                    >
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
 
             {showModal && (
-                <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <div
+                    className="modal show d-block"
+                    style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+                >
                     <div className="modal-dialog">
                         <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">
-                                    {modalidadEditar ? "Editar Modalidad" : "Nueva Modalidad"}
-                                </h5>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    onClick={() => setShowModal(false)}
-                                ></button>
-                            </div>
                             <ModalidadForm
+                                modalidadEditar={modalidadEditar}
                                 onSuccess={handleSuccess}
                                 onCancel={() => setShowModal(false)}
-                                modalidadEditar={modalidadEditar}
                             />
                         </div>
                     </div>

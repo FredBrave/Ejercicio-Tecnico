@@ -10,13 +10,16 @@ export default function CarrerasPage() {
     const [estado, setEstado] = useState("");
     const [modalidad, setModalidad] = useState("");
     const [modalidades, setModalidades] = useState([]);
+    const [texto, setTexto] = useState("");
+
 
 
     const cargarCarreras = async () => {
         const params = {};
 
-        if (estado !== "") params.estado = estado;
+        if (estado !== "") params.estado = estado === "true";
         if (modalidad !== "") params.modalidad = modalidad;
+        if (texto.trim() !== "") params.search = texto;
 
         const data = await carreraService.getAll(params);
         setCarreras(data);
@@ -33,7 +36,7 @@ export default function CarrerasPage() {
 
     useEffect(() => {
         cargarCarreras();
-    }, [estado, modalidad]);
+    }, [estado, modalidad, texto]);
 
     const handleSuccess = () => {
         setShowModal(false);
@@ -76,6 +79,16 @@ export default function CarrerasPage() {
             </div>
 
             <div className="row mb-3">
+                <div className="col-md-4">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Buscar carrera..."
+                        value={texto}
+                        onChange={(e) => setTexto(e.target.value)}
+                    />
+                </div>
+
                 <div className="col-md-3">
                     <select
                         className="form-select"
