@@ -1,20 +1,39 @@
 import { useEffect, useState } from "react";
 import CarreraForm from "../components/CarreraForm";
 import { carreraService } from "../services/CarreraService";
+import { modalidadService } from "../services/modalidadService";
 
 export default function CarrerasPage() {
     const [carreras, setCarreras] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [carreraEditar, setCarreraEditar] = useState(null);
+    const [estado, setEstado] = useState("");
+    const [modalidad, setModalidad] = useState("");
+    const [modalidades, setModalidades] = useState([]);
+
 
     const cargarCarreras = async () => {
-        const data = await carreraService.getAll();
+        const params = {};
+
+        if (estado !== "") params.estado = estado;
+        if (modalidad !== "") params.modalidad = modalidad;
+
+        const data = await carreraService.getAll(params);
         setCarreras(data);
-    }
+    };
+
+    useEffect(() => {
+        const cargarModalidades = async () => {
+            const data = await modalidadService.getAll();
+            setModalidades(data);
+        };
+
+        cargarModalidades();
+    }, []);
 
     useEffect(() => {
         cargarCarreras();
-    }, []);
+    }, [estado, modalidad]);
 
     const handleSuccess = () => {
         setShowModal(false);
@@ -54,6 +73,35 @@ export default function CarrerasPage() {
                 >
                     + Nueva Carrera
                 </button>
+            </div>
+
+            <div className="row mb-3">
+                <div className="col-md-3">
+                    <select
+                        className="form-select"
+                        value={estado}
+                        onChange={(e) => setEstado(e.target.value)}
+                    >
+                        <option value="">Todos los estados</option>
+                        <option value="true">Activos</option>
+                        <option value="false">Inactivos</option>
+                    </select>
+                </div>
+
+                <div className="col-md-3">
+                    <select
+                        className="form-select"
+                        value={modalidad}
+                        onChange={(e) => setModalidad(e.target.value)}
+                    >
+                        <option value="">Todas las modalidades</option>
+                        {modalidades.map((m) => (
+                            <option key={m.id} value={m.id}>
+                                {m.nombre}
+                            </option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             <table className="table table-bordered mt-3">

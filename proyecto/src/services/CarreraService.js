@@ -1,8 +1,8 @@
 import api from "../api/api";
 
 export const carreraService = {
-    getAll: async () => {
-        const response = await api.get("carreras/");
+    getAll: async (params = {}) => {
+        const response = await api.get("carreras/", { params });
         return response.data;
     },
 
