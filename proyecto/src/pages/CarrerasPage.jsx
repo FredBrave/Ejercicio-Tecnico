@@ -1,0 +1,120 @@
+import { useEffect, useState } from "react";
+import CarreraForm from "../components/CarreraForm";
+import { carreraService } from "../services/CarreraService";
+
+export default function CarrerasPage() {
+    const [carreras, setCarreras] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const [carreraEditar, setCarreraEditar] = useState(null);
+
+    const cargarCarreras = async () => {
+        const data = await carreraService.getAll();
+        setCarreras(data);
+    }
+
+    useEffect(() => {
+        cargarCarreras();
+    }, []);
+
+    const handleSuccess = () => {
+        setShowModal(false);
+        setCarreraEditar(null);
+        cargarCarreras();
+    };
+
+    const handleNueva = () => {
+        setCarreraEditar(null);
+        setShowModal(true);
+    };
+
+    const handleEditar = (carrera) => {
+        setCarreraEditar(carrera);
+        setShowModal(true);
+    };
+
+    const handleEliminar = async (id) => {
+        if (window.confirm("¿Estás seguro de eliminar esta carrera?")) {
+            try {
+                await carreraService.delete(id);
+                alert("Carrera eliminada correctamente");
+                cargarCarreras();
+            } catch (err) {
+                alert("Error al eliminar carrera");
+            }
+        }
+    };
+
+    return (
+        <div className="container mt-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <h2>Carreras</h2>
+                <button
+                    className="btn btn-primary"
+                    onClick={handleNueva}
+                >
+                    + Nueva Carrera
+                </button>
+            </div>
+
+            <table className="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Modalidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {carreras.map((c) => (
+                        <tr key={c.id}>
+                            <td>{c.id}</td>
+                            <td>{c.nombre}</td>
+                            <td>{c.estado ? "Activo" : "Inactivo"}</td>
+                            <td>{c.modalidad_nombre || c.modalidad}</td>
+                            <td>
+                                <button
+                                    className="btn btn-sm btn-warning me-2"
+                                    onClick={() => handleEditar(c)}
+                                >
+                                    Editar
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => handleEliminar(c.id)}
+                                >
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            {showModal && (
+                <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    {carreraEditar ? "Editar Carrera" : "Nueva Carrera"}
+                                </h5>
+                                <button
+                                    type="button"
+                                    className="btn-close"
+                                    onClick={() => setShowModal(false)}
+                                ></button>
+                            </div>
+                            <CarreraForm
+                                onSuccess={handleSuccess}
+                                onCancel={() => setShowModal(false)}
+                                carreraEditar={carreraEditar}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
