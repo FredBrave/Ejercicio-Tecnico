@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import api from "../api/api";
 import ModalidadForm from "../components/ModalidadForm";
+import { modalidadService } from "../services/ModalidadService";
 
 export default function ModalidadesPage() {
     const [modalidades, setModalidades] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [modalidadEditar, setModalidadEditar] = useState(null);
 
     const cargarModalidades = async () => {
-        const res = await api.get("modalidades/");
-        setModalidades(res.data);
+        const data = await modalidadService.getAll();
+        setModalidades(data);
     }
 
     useEffect(() => {
@@ -17,7 +18,30 @@ export default function ModalidadesPage() {
 
     const handleSuccess = () => {
         setShowModal(false);
+        setModalidadEditar(null);
         cargarModalidades();
+    };
+
+    const handleNueva = () => {
+        setModalidadEditar(null);
+        setShowModal(true);
+    };
+
+    const handleEditar = (modalidad) => {
+        setModalidadEditar(modalidad);
+        setShowModal(true);
+    };
+
+    const handleEliminar = async (id) => {
+        if (window.confirm("¿Estás seguro de eliminar esta modalidad?")) {
+            try {
+                await modalidadService.delete(id);
+                alert("Modalidad eliminada correctamente");
+                cargarModalidades();
+            } catch (err) {
+                alert("Error al eliminar modalidad");
+            }
+        }
     };
 
     return (
@@ -26,7 +50,7 @@ export default function ModalidadesPage() {
                 <h2>Modalidades</h2>
                 <button
                     className="btn btn-primary"
-                    onClick={() => setShowModal(true)}
+                    onClick={handleNueva}
                 >
                     + Nueva Modalidad
                 </button>
@@ -38,6 +62,7 @@ export default function ModalidadesPage() {
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Estado</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,6 +71,20 @@ export default function ModalidadesPage() {
                             <td>{m.id}</td>
                             <td>{m.nombre}</td>
                             <td>{m.estado ? "Activo" : "Inactivo"}</td>
+                            <td>
+                                <button
+                                    className="btn btn-sm btn-warning me-2"
+                                    onClick={() => handleEditar(m)}
+                                >
+                                    Editar
+                                </button>
+                                <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => handleEliminar(m.id)}
+                                >
+                                    Eliminar
+                                </button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
@@ -56,7 +95,9 @@ export default function ModalidadesPage() {
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">Nueva Modalidad</h5>
+                                <h5 className="modal-title">
+                                    {modalidadEditar ? "Editar Modalidad" : "Nueva Modalidad"}
+                                </h5>
                                 <button
                                     type="button"
                                     className="btn-close"
@@ -66,6 +107,7 @@ export default function ModalidadesPage() {
                             <ModalidadForm
                                 onSuccess={handleSuccess}
                                 onCancel={() => setShowModal(false)}
+                                modalidadEditar={modalidadEditar}
                             />
                         </div>
                     </div>

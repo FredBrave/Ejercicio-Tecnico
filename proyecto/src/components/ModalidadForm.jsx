@@ -1,10 +1,17 @@
-import { useState } from "react";
-import api from "../api/api";
+import { useState, useEffect } from "react";
+import { modalidadService } from "../services/modalidadService";
 
-export default function ModalidadForm({ onSuccess, onCancel }) {
+export default function ModalidadForm({ onSuccess, onCancel, modalidadEditar }) {
     const [nombre, setNombre] = useState("");
     const [estado, setEstado] = useState(true);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (modalidadEditar) {
+            setNombre(modalidadEditar.nombre);
+            setEstado(modalidadEditar.estado);
+        }
+    }, [modalidadEditar]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,17 +23,19 @@ export default function ModalidadForm({ onSuccess, onCancel }) {
         }
 
         try {
-            await api.post("modalidades/", {
-                nombre,
-                estado,
-            });
+            if (modalidadEditar) {
+                await modalidadService.update(modalidadEditar.id, { nombre, estado });
+                alert("Modalidad actualizada correctamente");
+            } else {
+                await modalidadService.create({ nombre, estado });
+                alert("Modalidad creada correctamente");
+            }
 
             setNombre("");
             setEstado(true);
-            alert("Modalidad creada correctamente");
             onSuccess();
         } catch (err) {
-            setError("Error al crear modalidad");
+            setError(modalidadEditar ? "Error al actualizar modalidad" : "Error al crear modalidad");
         }
     };
 
@@ -63,7 +72,7 @@ export default function ModalidadForm({ onSuccess, onCancel }) {
                     Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary">
-                    Guardar
+                    {modalidadEditar ? "Actualizar" : "Guardar"}
                 </button>
             </div>
         </form>
