@@ -3,7 +3,9 @@ from rest_framework import routers
 from academico import views
 
 router = routers.DefaultRouter()
-router.register(r'modalidades', views.ModalidadView, 'Modalidades')
+router.register(r'modalidades', views.ModalidadView, basename='modalidades')
+router.register(r'carreras', views.CarreraView, basename='carreras')
+
 urlpatterns = [
-    path("api/v1_0_0/", include(router.urls))
+    path('v1_0_0/', include(router.urls)),
 ]
